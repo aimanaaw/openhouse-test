@@ -103,25 +103,36 @@ def home():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-	# user = User(id = 'MMM155')
+	# user = User(id = 'AAA500')
 	# db.session.add(user)
 	# db.session.commit()
-	# session = Session(id = 'JJL139', user_id = 'MMM155')
+	# session = Session(id = 'BBB900', user_id = 'AAA500')
 	# db.session.add(session)
 	# db.session.commit()
 	# action = Action(time = "2018-10-18T21:37:28-06:00", type = "CLICK", properties = {
 	# 	"locationX": 52,
 	# 	"locationY": 11
-	#   }, session_id = 'JJL139')
+	#   }, session_id = 'BBB900')
 	# db.session.add(action)
 	# db.session.commit()
 	# print(user)
 	# print(session)
 	# resultArray = action
 	form = NewLog()
-	if form.validate_on_submit():
-		flash(f'Log submitted for {form.user_id.data}', 'successful')
-		return redirect(url_for('home'))
+	print('test')
+	# if form.validate_on_submit():
+	user = User(id = form.user_id)
+	print("TESRING", form.user_id)
+	db.session.add(user)
+	db.session.commit()
+	session = Session(id = form.session_id, user_id = form.user_id)
+	db.session.add(session)
+	db.session.commit()
+	action = Action(time = form.time, type = form.type, properties = form.properties, session_id = form.session_id)
+	db.session.add(action)
+	db.session.commit()
+	flash(f'Log submitted for {form.user_id.data}', 'successful')
+		# return redirect(url_for('home'))
 	return render_template('data-form.html', title='Upload', form = form)
 
 	# return 'done', 201

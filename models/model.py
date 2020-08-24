@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import JSON
 class User(db.Model):
     __tablename__ = 'users'
 
-    id = db.Column(db.String, primary_key=True, nullable=False)
+    id = db.Column(db.Text, primary_key=True, nullable=False)
 
     def __init__(self, id):
         self.id = id
@@ -17,8 +17,8 @@ class User(db.Model):
 class Session(db.Model):
     __tablename__ = 'sessions'
 
-    id = db.Column(db.String, primary_key=True)
-    user_id = db.Column(db.String, db.ForeignKey('users.id'), nullable=False)
+    id = db.Column(db.Text, primary_key=True)
+    user_id = db.Column(db.Text, db.ForeignKey('users.id'), nullable=False)
 
     def __init__(self, id, user_id):
         self.id = id
@@ -36,10 +36,9 @@ class Action(db.Model):
     time = db.Column(db.DateTime)
     type = db.Column(db.Text)
     properties = db.Column(JSON)
-    session_id = db.Column(db.String, db.ForeignKey('sessions.id'))
+    session_id = db.Column(db.Text, db.ForeignKey('sessions.id'))
 
     def __init__(self,time, type, properties, session_id):
-        # self.id = id
         self.time = time
         self.type = type
         self.properties = properties
