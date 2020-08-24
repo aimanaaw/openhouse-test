@@ -1,6 +1,6 @@
-from app import db
+from __main__ import db
+from datetime import datetime
 from sqlalchemy.dialects.postgresql import JSON
-
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -38,8 +38,8 @@ class Action(db.Model):
     properties = db.Column(JSON)
     session_id = db.Column(db.String, db.ForeignKey('sessions.id'))
 
-    def __init__(self, id, time, type, properties, session_id):
-        self.id = id
+    def __init__(self,time, type, properties, session_id):
+        # self.id = id
         self.time = time
         self.type = type
         self.properties = properties

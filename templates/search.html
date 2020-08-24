@@ -3,26 +3,18 @@
   <div>
     <form method="POST", action = "">
       {{ form.hidden_tag() }}
-      <h1> Log an entry </h1>
+      <h1> Enter search parameters </h1>
       <div>
         <p>Enter user id</p>
         {{ form.user_id }}
       </div>
       <div>
-        <p>Enter session id</p>
-        {{ form.session_id }}
-      </div>
-      <div>
-        <p>Enter date</p>
+        <p>Enter time</p>
         {{ form.time }}
       </div>
       <div>
         <p>Enter action type</p>
         {{ form.type }}
-      </div>
-      <div>
-        <p>Enter properties</p>
-        {{ form.properties }}
       </div>
       <div>
         <p></p>
