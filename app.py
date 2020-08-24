@@ -15,139 +15,65 @@ from models.model import User, Session, Action
 
 
 
-# class User(db.Model):
-#     __tablename__ = 'users'
-
-#     id = db.Column(db.String, primary_key=True, nullable=False)
-
-#     def __init__(self, id):
-#         self.id = id
-
-#     def __repr__(self):
-#         return '<id {}>'.format(self.id)
-
-
-# class Session(db.Model):
-#     __tablename__ = 'sessions'
-
-#     id = db.Column(db.String, primary_key=True)
-#     user_id = db.Column(db.String, db.ForeignKey('users.id'), nullable=False)
-
-#     def __init__(self, id, user_id):
-#         self.id = id
-#         self.user_id = user_id
-
-
-#     def __repr__(self):
-#         return '<id {}>'.format(self.id)
-
-
-# class Action(db.Model):
-#     __tablename__ = 'actions'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     time = db.Column(db.DateTime)
-#     type = db.Column(db.Text)
-#     properties = db.Column(JSON)
-#     session_id = db.Column(db.String, db.ForeignKey('sessions.id'))
-
-#     def __init__(self,time, type, properties, session_id):
-#         # self.id = id
-#         self.time = time
-#         self.type = type
-#         self.properties = properties
-#         self.session_id = session_id
-
-#     def __repr__(self):
-#         return '<id {}>'.format(self.id)
-
-
 @app.route('/')
 @app.route('/home')
 def home():
 	temp = db.select([Session])
-	print(temp)
-	# entries = db.select([User, Session, Action])
+	payload = db.session.query(User, Session, Action).select_from(User).join(Session).join(Action).all()
+
+	print(payload)
 	entries = Action.query.all()
 	
 	dump = []
 	for each in entries:
-		print(each.time)
+		# print(each.time)
 		dump.append({each.session_id: {
 			"type": each.type,
 			"time": each.time,
 			"properties": each.properties
 			}})
-	print('dump', dump)
-	return render_template('home.html', actionLogs = dump)
-
-
-# @app.route('/')
-# @app.route('/home')
-# def home():
-# 	temp = db.select([Session])
-# 	print(temp)
-# 	# entries = db.select([User, Session, Action])
-# 	entries = Action.query.all()
-	
-# 	dump = []
-# 	for each in entries:
-# 		dump.append({each.session_id: {
-# 			"type": each.type,
-# 			"time": each.time,
-# 			"properties": each.properties
-# 			}})
-# 	return jsonify(dump)
+	# print('dump', dump)
+	return jsonify(dump), 201
 
 
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-	# user = User(id = 'AAA500')
-	# db.session.add(user)
-	# db.session.commit()
-	# session = Session(id = 'BBB900', user_id = 'AAA500')
-	# db.session.add(session)
-	# db.session.commit()
-	# action = Action(time = "2018-10-18T21:37:28-06:00", type = "CLICK", properties = {
-	# 	"locationX": 52,
-	# 	"locationY": 11
-	#   }, session_id = 'BBB900')
-	# db.session.add(action)
-	# db.session.commit()
-	# print(user)
-	# print(session)
-	# resultArray = action
-	form = NewLog()
-	print('test')
-	# if form.validate_on_submit():
-	user = User(id = form.user_id)
-	print("TESRING", form.user_id)
+	user = User(id = 'AAA500')
 	db.session.add(user)
 	db.session.commit()
-	session = Session(id = form.session_id, user_id = form.user_id)
+	session = Session(id = 'BBB900', user_id = 'AAA500')
 	db.session.add(session)
 	db.session.commit()
-	action = Action(time = form.time, type = form.type, properties = form.properties, session_id = form.session_id)
+	action = Action(time = "2018-10-18T21:37:28-06:00", type = "CLICK", properties = {
+		"locationX": 52,
+		"locationY": 11
+	  }, session_id = 'BBB900')
 	db.session.add(action)
 	db.session.commit()
-	flash(f'Log submitted for {form.user_id.data}', 'successful')
-		# return redirect(url_for('home'))
-	return render_template('data-form.html', title='Upload', form = form)
+	resultArray = action
 
-	# return 'done', 201
-
+	return action, 201
 
 
 @app.route('/search', methods=['GET', 'POST'])
 def queryData():
 	form = SearchForm()
-	if form.validate_on_submit():
-		flash(f'Log submitted for {form.user_id.data}', 'successful')
-		return 'query data', 201
-	else:
-		flash('No entries for search parameters!')
-	return render_template('search.html', title='Search', form = form)
+	dump = []
+	payload = db.session.query(User, Session, Action).select_from(User).join(Session).join(Action).all()
+	print('testing', payload)
+	for eachItem in payload:
+		dump.append({
+			eachItem[0].id: {
+			"sessionId": eachItem[1].id,
+			"actions": {
+			"type": eachItem[2].type,
+			"time": eachItem[2].time,
+			"properties": eachItem[2].properties
+			}
+			}
+			})
+	return jsonify(dump), 201
 
 if __name__ == '__main__':
 	app.run()
