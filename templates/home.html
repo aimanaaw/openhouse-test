@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+  {% if actionLogs %}
+    {% for action in actionLogs %}
+
+      {% for eachitem in action %}
+        <h1>{{eachitem}}</h1>
+        <h3>{{action[eachitem]}}</h3>
+      {% endfor%}
+
+    
+    {% endfor %}
+  {% else %}
+    <h1>No logs</h1>
+  {% endif %}
+
+{% endblock %}
